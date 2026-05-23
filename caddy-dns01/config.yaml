@@ -1,0 +1,31 @@
+name: Caddy DNS-01
+version: "0.1.0"
+slug: caddy-dns01
+description: Caddy 2 reverse proxy with Cloudflare DNS-01 ACME, fronting Home Assistant.
+url: https://github.com/cinderblock/caddy-dns01/tree/master/caddy-dns01
+arch:
+  - amd64
+  - aarch64
+image: ghcr.io/cinderblock/{arch}-caddy-dns01
+init: false
+host_network: true
+boot: auto
+startup: services
+ports:
+  "80/tcp": 80
+  "443/tcp": 443
+  "443/udp": 443
+ports_description:
+  "80/tcp": HTTP — ACME challenges + automatic redirect to HTTPS
+  "443/tcp": HTTPS — TLS-terminating reverse proxy
+  "443/udp": HTTP/3 (QUIC)
+options:
+  domain: ""
+  email: ""
+  upstream: "localhost:8123"
+  cloudflare_api_token: ""
+schema:
+  domain: str
+  email: email
+  upstream: str
+  cloudflare_api_token: password

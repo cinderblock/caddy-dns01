@@ -1,0 +1,11 @@
+{
+    email @@EMAIL@@
+}
+
+@@DOMAIN@@ {
+    reverse_proxy @@UPSTREAM@@
+
+    tls {
+        dns cloudflare {env.CF_API_TOKEN}
+    }
+}

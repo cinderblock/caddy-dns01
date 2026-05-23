@@ -1,42 +1,52 @@
 # caddy-dns01
 
 A small Caddy 2 build with the [`caddy-dns/cloudflare`](https://github.com/caddy-dns/cloudflare)
-provider, plus a Home Assistant add-on that uses it as a TLS-terminating reverse
-proxy in front of `localhost:8123`.
+provider, packaged as a Home Assistant add-on that fronts HA on `localhost:8123`
+with HTTPS using DNS-01 ACME (no port 80 reachability from the public internet
+required).
 
-Two artifacts in one repo:
+One multi-arch image published per release:
 
-- **`base/`** — the lean Caddy image (Caddy 2 + Cloudflare DNS plugin, nothing
-  else). Published as a multi-arch image at
-  `ghcr.io/cinderblock/caddy-dns01-base:latest`. Use it directly if you just
-  want Caddy with DNS-01 (any setting, any upstream).
-- **`caddy-dns01/`** — the Home Assistant add-on. Builds on `base/`, adds a
-  tiny entrypoint that renders a Caddyfile from add-on options, and exposes
-  ports 80/443. Listed in `repository.yaml` so HA Supervisor finds it.
+- `ghcr.io/cinderblock/caddy-dns01:latest` (and `:<version>`) — multi-arch
+  manifest covering `linux/amd64` + `linux/arm64`. `docker pull` (and HA
+  Supervisor's pull) auto-resolves the right architecture.
 
-## Use as an HA add-on
+## Use as a Home Assistant add-on
 
 In Home Assistant: **Settings → Add-ons → ⋮ → Repositories → Add**, paste
-`https://github.com/cinderblock/caddy-dns01`. Then install **Caddy DNS-01**
-from the add-on store, fill in the options (Cloudflare API token, domain,
-ACME email), and start.
 
-Required Cloudflare API token permissions:
+```
+https://github.com/cinderblock/caddy-dns01
+```
 
-- `Zone:DNS:Edit` (create/delete `_acme-challenge` TXT records)
-- `Zone:Zone:Read` (look up the zone ID)
+Then install **Caddy DNS-01** from the add-on store, fill in the options, and
+start.
 
-Scoped to the specific zone (`Zone Resources → Include → Specific zone`).
-Don't use the legacy Global API Key.
+Required Cloudflare API token permissions (under **My Profile → API Tokens →
+Create Token → Custom token**):
 
-## Use the base image standalone
+- `Zone:DNS:Edit` — create/delete `_acme-challenge` TXT records
+- `Zone:Zone:Read` — look up the zone ID
+
+Scoped to the specific zone (**Zone Resources → Include → Specific zone →
+yourdomain.com**). Don't use the legacy Global API Key — the add-on rejects it
+deliberately.
+
+## Use the image standalone (non-HA)
+
+The image is self-contained Caddy 2 + Cloudflare DNS plugin; the HA addon
+entrypoint just renders a Caddyfile from `/data/options.json` before exec'ing
+Caddy. To use it outside HA, supply your own Caddyfile and override the
+entrypoint:
 
 ```bash
 docker run --rm -d \
-  -e CF_API_TOKEN=<token> \
+  -e CF_API_TOKEN=<your-token> \
   -p 80:80 -p 443:443 -p 443:443/udp \
   -v $PWD/Caddyfile:/etc/caddy/Caddyfile \
-  ghcr.io/cinderblock/caddy-dns01-base:latest
+  --entrypoint caddy \
+  ghcr.io/cinderblock/caddy-dns01:latest \
+  run --config /etc/caddy/Caddyfile
 ```
 
 Example `Caddyfile`:
@@ -49,6 +59,14 @@ example.com {
     }
 }
 ```
+
+## Repository layout
+
+- `caddy-dns01/` — the HA add-on (slug `caddy-dns01`): `config.yaml`,
+  `Dockerfile`, `run.sh`, `Caddyfile.tmpl`, README, CHANGELOG.
+- `repository.yaml` — registers this repo as a HA add-on repository.
+- `.github/workflows/build.yaml` — CI: native per-arch builds + multi-arch
+  manifest stitch.
 
 ## License
 

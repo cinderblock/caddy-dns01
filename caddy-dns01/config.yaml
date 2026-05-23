@@ -6,7 +6,7 @@ url: https://github.com/cinderblock/caddy-dns01/tree/master/caddy-dns01
 arch:
   - amd64
   - aarch64
-image: ghcr.io/cinderblock/{arch}-caddy-dns01
+image: ghcr.io/cinderblock/caddy-dns01
 init: false
 host_network: true
 boot: auto

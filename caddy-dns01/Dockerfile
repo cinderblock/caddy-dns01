@@ -5,14 +5,16 @@
 FROM caddy:2-builder AS builder
 
 RUN xcaddy build \
-    --with github.com/caddy-dns/cloudflare
+    --with github.com/caddy-dns/cloudflare \
+    --with github.com/mholt/caddy-l4
 
 FROM caddy:2
 
 COPY --from=builder /usr/bin/caddy /usr/bin/caddy
 
-# Smoke-test: fails the build if the Cloudflare provider didn't link.
-RUN caddy list-modules | grep -q '^dns.providers.cloudflare$'
+# Smoke-test: fails the build if the Cloudflare provider or layer4 didn't link.
+RUN caddy list-modules | grep -q '^dns.providers.cloudflare$' \
+    && caddy list-modules | grep -q '^caddy.listeners.layer4$'
 
 # Tools for the HA add-on entrypoint
 RUN apk add --no-cache jq

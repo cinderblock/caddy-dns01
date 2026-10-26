@@ -1,5 +1,5 @@
 name: Caddy DNS-01
-version: "0.1.0"
+version: "0.2.0"
 slug: caddy-dns01
 description: Caddy 2 reverse proxy with Cloudflare DNS-01 ACME, fronting Home Assistant.
 url: https://github.com/cinderblock/caddy-dns01/tree/master/caddy-dns01
@@ -11,6 +11,11 @@ init: false
 host_network: true
 boot: auto
 startup: services
+# /addon_configs/<repo>_caddy-dns01 → /config: optional global.d/ and sites.d/
+# Caddyfile snippets, imported by Caddyfile.tmpl.
+map:
+  - type: addon_config
+    read_only: true
 ports:
   "80/tcp": 80
   "443/tcp": 443

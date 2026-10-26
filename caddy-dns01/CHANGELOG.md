@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0
+
+- Build includes [`caddy-l4`](https://github.com/mholt/caddy-l4) (layer-4 routing, e.g. TLS passthrough by SNI)
+- Maps the add-on config dir read-only at `/config`; the Caddyfile imports
+  `/config/global.d/*.caddy` (inside the global options) and `/config/sites.d/*.caddy`
+
 ## 0.1.0 — initial
 
 - Caddy 2 reverse proxy with Cloudflare DNS-01 ACME

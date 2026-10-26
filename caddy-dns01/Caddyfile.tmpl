@@ -1,5 +1,9 @@
 {
     email @@EMAIL@@
+
+    # Extra global options (e.g. a `servers :443 { listener_wrappers { layer4 … } }`
+    # block) from the add-on config dir. A glob that matches nothing is fine.
+    import /config/global.d/*.caddy
 }
 
 @@DOMAIN@@ {
@@ -9,3 +13,6 @@
         dns cloudflare {env.CF_API_TOKEN}
     }
 }
+
+# Extra sites from the add-on config dir.
+import /config/sites.d/*.caddy

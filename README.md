@@ -1,7 +1,7 @@
 # caddy-dns01
 
 A small Caddy 2 build with the [`caddy-dns/cloudflare`](https://github.com/caddy-dns/cloudflare)
-provider, packaged as a Home Assistant add-on that fronts HA on `localhost:8123`
+provider and [`caddy-l4`](https://github.com/mholt/caddy-l4), packaged as a Home Assistant add-on that fronts HA on `localhost:8123`
 with HTTPS using DNS-01 ACME (no port 80 reachability from the public internet
 required).
 

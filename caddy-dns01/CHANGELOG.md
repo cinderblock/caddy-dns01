@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.1
+
+- Mount the add-on config dir at `/addon_config` instead of `/config`. The caddy
+  base image keeps its config autosave in `/config`, which 0.2.0's read-only
+  mapping shadowed (`unable to create folder for config autosave`).
+
 ## 0.2.0
 
 - Build includes [`caddy-l4`](https://github.com/mholt/caddy-l4) (layer-4 routing, e.g. TLS passthrough by SNI)

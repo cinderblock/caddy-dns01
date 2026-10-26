@@ -25,7 +25,7 @@ leading or trailing newline otherwise produces Cloudflare error
 ## Extra Caddyfile snippets
 
 The add-on config dir (`/addon_configs/<repo>_caddy-dns01` on the host,
-`/config` in the container, read-only) can hold Caddyfile snippets:
+`/addon_config` in the container, read-only) can hold Caddyfile snippets:
 
 - `global.d/*.caddy` — imported inside the global options block.
 - `sites.d/*.caddy` — imported after the HA site.
